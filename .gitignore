@@ -9,3 +9,6 @@ env/
 
 # Ignore .env file
 .env
+
+# Unit test / coverage reports
+.coverage
