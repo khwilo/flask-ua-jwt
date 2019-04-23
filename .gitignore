@@ -1,0 +1,11 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Ignore the environment files
+env/
+
+# Ignore .vscode directory and its files
+.vscode/
+
+# Ignore .env file
+.env
