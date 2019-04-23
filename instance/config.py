@@ -21,6 +21,11 @@ class TestingConfig(Config):
     TESTING = True
 
 
+class StagingConfig(Config):
+    """Staging configuration class"""
+    DEBUG = True
+
+
 class ProductionConfig(Config):
     """Production configuration class"""
     DEBUG = False
