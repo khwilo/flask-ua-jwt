@@ -10,7 +10,7 @@ def create_user_table_query():
     email VARCHAR(254) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
     is_admin BOOLEAN NOT NULL DEFAULT FALSE,
-    registerd_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    registered_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     )
     """
 
