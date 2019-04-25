@@ -21,3 +21,22 @@ class UserTestCase(BaseTestCase):
             response_msg["message"],
             "User account was created successfully"
         )
+
+    def test_duplicate_email(self):
+        """Test that the email address is unique for all accounts"""
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(
+            response_msg["message"]["error"],
+            "Email address 'foo123@example.com' is taken!"
+        )
