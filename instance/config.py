@@ -13,12 +13,14 @@ class Config:
 class DevelopmentConfig(Config):
     """Development configuration class"""
     DEBUG = True
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 class TestingConfig(Config):
     """Testing configuration class"""
     DEBUG = True
     TESTING = True
+    DATABASE_URL = os.getenv("DATABASE_TEST_URL")
 
 
 class StagingConfig(Config):

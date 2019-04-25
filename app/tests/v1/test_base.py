@@ -1,7 +1,9 @@
 """Base test definitions"""
+import os
 import unittest
 
 from app import create_app
+from manage import establish_connection, migrate_test, destroy
 
 
 class BaseTestCase(unittest.TestCase):
@@ -12,7 +14,14 @@ class BaseTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.app_context.push()
 
+        with self.app_context:
+            self.connection = establish_connection()
+            self.database_url = os.getenv("DATABASE_TEST_URL")
+            migrate_test()
+
     def tearDown(self):
+        destroy(self.database_url)
+        self.connection.close()
         self.app_context.pop()
 
     @staticmethod
