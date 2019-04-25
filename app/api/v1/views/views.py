@@ -1,4 +1,5 @@
 """Module for the user view"""
+from flask import abort
 from flask_restful import Resource, reqparse
 
 from app.api.v1.models.models import UserModel
@@ -34,9 +35,18 @@ class UserRegistration(Resource):
             password=data["password"]
         )
 
+        if user.find_user_by_email(data["email"]):
+            abort(409, {
+                "error": "Email address '{}' is taken!".format(data["email"]),
+                "status": 409
+            })
+
         user.save()
+
+        result = user.find_user_by_email(data["email"])
 
         return {
             "status": 201,
+            "user": UserModel.to_json(result),
             "message": "User account was created successfully"
         }, 201
