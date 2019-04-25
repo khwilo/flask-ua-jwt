@@ -25,3 +25,20 @@ class UserModel(BaseModel):
         )
         self.cursor.execute(query)
         self.connection.commit()
+
+    def find_user_by_email(self, value):
+        """Find a user by his/her email address"""
+        result = self.search_user("email", value)
+        return result
+
+    @staticmethod
+    def to_json(result):
+        """Return a JSON representation of the user's info"""
+        return {
+            "id": result["id"],
+            "firstname": result["firstname"],
+            "lastname": result["lastname"],
+            "email": result["email"],
+            "isAdmin": result["is_admin"],
+            "registered": str(result["registered_on"]),
+        }
