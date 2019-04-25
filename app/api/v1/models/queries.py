@@ -26,6 +26,14 @@ def insert_user_query():
     return insert_user
 
 
+def find_user_by_value(column, value):
+    """
+    SQL query to search if a record already exists in the 'users' table
+    """
+    query = """SELECT * FROM users WHERE {}='{}';""".format(column, value)
+    return query
+
+
 def drop_user_table_query():
     """SQL query to drop the users table"""
     drop_users = "DROP TABLE IF EXISTS users CASCADE"
