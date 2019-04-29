@@ -52,3 +52,39 @@ class UserRegistration(Resource):
             "auth_token": auth_token.decode(),
             "message": "User account was created successfully"
         }, 201
+
+
+class UserLogin(Resource):
+    """
+    User Login Resource
+    """
+    def post(self):
+        """Login to a user account"""
+        user = UserModel()
+
+        parser = reqparse.RequestParser(bundle_errors=True)
+        parser.add_argument(
+            "email",
+            type=str, required=True, help="email cannot be blank"
+        )
+        parser.add_argument(
+            "password",
+            type=str, required=True, help="password cannot be blank")
+
+        data = parser.parse_args()
+
+        current_user = user.find_user_by_email(data["email"])
+
+        if not current_user:
+            abort(404, {
+                "error": "Wrong email address or password!",
+                "status": 404
+            })
+
+        auth_token = user.encode_auth_token(current_user["id"])
+        return {
+            "status": 201,
+            "user": user.to_json(current_user),
+            "auth_token": auth_token.decode(),
+            "message": "You have successfully logged in"
+        }, 200

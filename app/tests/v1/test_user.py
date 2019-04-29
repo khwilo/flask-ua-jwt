@@ -2,7 +2,8 @@
 import json
 
 from app.api.v1.models.models import UserModel
-from app.tests.v1.sample_data import USER_REGISTRATION
+from app.tests.v1.sample_data import USER_REGISTRATION, USER_LOGIN, \
+    USER_NOT_FOUND
 from app.tests.v1.test_base import BaseTestCase
 
 
@@ -69,3 +70,40 @@ class UserTestCase(BaseTestCase):
         auth_token = user.encode_auth_token(user_id)
         self.assertTrue(isinstance(auth_token, bytes))
         self.assertEqual(UserModel.decode_auth_token(auth_token), 1)
+
+    def test_user_login(self):
+        """Test that a user can be able to login"""
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 201)
+        res = self.client.post(
+            "/v1/auth/login",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_LOGIN)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(response_msg["auth_token"])
+        self.assertTrue(response_msg["message"])
+        self.assertEqual(
+            response_msg["message"],
+            "You have successfully logged in"
+        )
+
+    def test_user_not_found(self):
+        """Test that an unregistered user cannot log in"""
+        res = self.client.post(
+            "/v1/auth/login",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_NOT_FOUND)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(
+            response_msg["message"]["error"],
+            "Wrong email address or password!"
+        )
