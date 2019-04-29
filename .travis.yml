@@ -1,7 +1,7 @@
 env:
-   - DATABASE_TEST_URL="dbname='flask_ua_jwt_test' host='127.0.0.1' port='5432' user='postgres' password=''"
   global:
     - CC_TEST_REPORTER_ID=649aa33a900080d599dcbe180d2bb2f737eea86452ef40a2a35910f1f8986da9
+    - DATABASE_TEST_URL="dbname='flask_ua_jwt_test' host='127.0.0.1' port='5432' user='postgres' password=''"
 language: python
 python:
   - "3.6.7"
@@ -10,7 +10,6 @@ install:
   - pip install coverage
 before_script:
   - psql -c "CREATE DATABASE flask_ua_jwt_test" -U postgres
-  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to postgres ;" -U postgres
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
