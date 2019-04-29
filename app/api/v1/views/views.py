@@ -48,7 +48,6 @@ class UserRegistration(Resource):
 
         return {
             "status": 201,
-            "user": UserModel.to_json(result),
             "auth_token": auth_token.decode(),
             "message": "User account was created successfully"
         }, 201
@@ -84,7 +83,6 @@ class UserLogin(Resource):
         auth_token = user.encode_auth_token(current_user["id"])
         return {
             "status": 201,
-            "user": user.to_json(current_user),
             "auth_token": auth_token.decode(),
             "message": "You have successfully logged in"
         }, 200
