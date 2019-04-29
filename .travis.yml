@@ -1,7 +1,7 @@
 env:
   global:
     - CC_TEST_REPORTER_ID=649aa33a900080d599dcbe180d2bb2f737eea86452ef40a2a35910f1f8986da9
-  - DATABASE_TEST_URL="dbname='flask_ua_jwt_test' host='127.0.0.1' port='5432' user='postgres' password=''"
+    - DATABASE_TEST_URL="dbname='flask_ua_jwt_test' host='127.0.0.1' port='5432' user='postgres' password=''"
 language: python
 python:
   - "3.6.7"
