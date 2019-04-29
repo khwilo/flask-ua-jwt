@@ -1,8 +1,17 @@
 """Use entity module"""
-from datetime import datetime
+import os
+from os.path import join, dirname
+from datetime import datetime, timedelta
+
+import jwt
+from dotenv import load_dotenv
 
 from app.api.v1.models.base_model import BaseModel
 from app.api.v1.models.queries import insert_user_query
+
+DOTENV_PATH = join(dirname(__file__), ".env")
+
+load_dotenv(DOTENV_PATH)
 
 
 class UserModel(BaseModel):
@@ -30,6 +39,22 @@ class UserModel(BaseModel):
         """Find a user by his/her email address"""
         result = self.search_user("email", value)
         return result
+
+    def encode_auth_token(self, user_id):
+        """Generate the authentication token"""
+        try:
+            payload = {
+                "sub": user_id,
+                "iat": datetime.utcnow(),
+                "exp": datetime.utcnow() + timedelta(seconds=10)
+            }
+            return jwt.encode(
+                payload,
+                os.getenv("JWT_SECRET_KEY"),
+                algorithm="HS256"
+            )
+        except Exception as jwt_exception:
+            return jwt_exception
 
     @staticmethod
     def to_json(result):
