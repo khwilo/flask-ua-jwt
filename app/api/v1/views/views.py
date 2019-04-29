@@ -44,9 +44,11 @@ class UserRegistration(Resource):
         user.save()
 
         result = user.find_user_by_email(data["email"])
+        auth_token = user.encode_auth_token(result["id"])
 
         return {
             "status": 201,
             "user": UserModel.to_json(result),
+            "auth_token": auth_token.decode(),
             "message": "User account was created successfully"
         }, 201

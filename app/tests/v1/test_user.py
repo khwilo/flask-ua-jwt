@@ -18,6 +18,7 @@ class UserTestCase(BaseTestCase):
         response_msg = json.loads(res.data.decode("UTF-8"))
         self.assertEqual(res.status_code, 201)
         self.assertTrue(response_msg["message"])
+        self.assertTrue(response_msg["auth_token"])
         self.assertEqual(
             response_msg["message"],
             "User account was created successfully"
