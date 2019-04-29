@@ -85,7 +85,7 @@ class UserTestCase(BaseTestCase):
             data=json.dumps(USER_LOGIN)
         )
         response_msg = json.loads(res.data.decode("UTF-8"))
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 200)
         self.assertTrue(response_msg["auth_token"])
         self.assertTrue(response_msg["message"])
         self.assertEqual(

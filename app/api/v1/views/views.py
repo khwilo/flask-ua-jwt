@@ -87,4 +87,4 @@ class UserLogin(Resource):
             "user": user.to_json(current_user),
             "auth_token": auth_token.decode(),
             "message": "You have successfully logged in"
-        }, 201
+        }, 200
