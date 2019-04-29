@@ -41,7 +41,7 @@ class UserModel(BaseModel):
         return result
 
     def encode_auth_token(self, user_id):
-        """Generate the authentication token"""
+        """Encode the authentication token"""
         try:
             payload = {
                 "sub": user_id,
@@ -55,6 +55,21 @@ class UserModel(BaseModel):
             )
         except Exception as jwt_exception:
             return jwt_exception
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """Decode the authentication token"""
+        try:
+            payload = jwt.decode(
+                auth_token,
+                os.getenv("JWT_SECRET_KEY"),
+                algorithms="HS256"
+            )
+            return payload["sub"]
+        except jwt.ExpiredSignatureError:
+            return "Signature expired. Please log in again."
+        except jwt.InvalidTokenError:
+            return "Invalid token. Please log in again."
 
     @staticmethod
     def to_json(result):
