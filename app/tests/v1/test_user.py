@@ -54,3 +54,17 @@ class UserTestCase(BaseTestCase):
         user_id = user.find_user_by_email("jane@example.com")["id"]
         auth_token = user.encode_auth_token(user_id)
         self.assertTrue(isinstance(auth_token, bytes))
+
+    def test_decode_auth_token(self):
+        """Test that the authentication token can be decoded"""
+        user = UserModel(
+            firstname="Jane",
+            lastname="Doe",
+            email="jane@example.com",
+            password="doe123jo"
+        )
+        user.save()
+        user_id = user.find_user_by_email("jane@example.com")["id"]
+        auth_token = user.encode_auth_token(user_id)
+        self.assertTrue(isinstance(auth_token, bytes))
+        self.assertEqual(UserModel.decode_auth_token(auth_token), 1)
