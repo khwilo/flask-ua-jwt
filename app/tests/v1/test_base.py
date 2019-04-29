@@ -32,5 +32,13 @@ class BaseTestCase(unittest.TestCase):
         content_type["Content-Type"] = "application/json"
         return content_type
 
+    @staticmethod
+    def get_authentication_headers(auth_token):
+        """Return the authentication header"""
+        authentication_headers = BaseTestCase.get_accept_content_type_headers()
+        authentication_headers['Authorization'] = \
+            "Bearer {}".format(auth_token)
+        return authentication_headers
+
 if __name__ == "__main__":
     unittest.main()

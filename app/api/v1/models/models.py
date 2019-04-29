@@ -46,7 +46,7 @@ class UserModel(BaseModel):
             payload = {
                 "sub": user_id,
                 "iat": datetime.utcnow(),
-                "exp": datetime.utcnow() + timedelta(seconds=10)
+                "exp": datetime.utcnow() + timedelta(seconds=30)
             }
             return jwt.encode(
                 payload,
