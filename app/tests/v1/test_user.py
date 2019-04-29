@@ -1,6 +1,7 @@
 """Test cases for the user authentication"""
 import json
 
+from app.api.v1.models.models import UserModel
 from app.tests.v1.sample_data import USER_REGISTRATION
 from app.tests.v1.test_base import BaseTestCase
 
@@ -40,3 +41,16 @@ class UserTestCase(BaseTestCase):
             response_msg["message"]["error"],
             "Email address 'foo123@example.com' is taken!"
         )
+
+    def test_encode_auth_token(self):
+        """Test that the authentication token is created"""
+        user = UserModel(
+            firstname="Jane",
+            lastname="Doe",
+            email="jane@example.com",
+            password="doe123jo"
+        )
+        user.save()
+        user_id = user.find_user_by_email("jane@example.com")["id"]
+        auth_token = user.encode_auth_token(user_id)
+        self.assertTrue(isinstance(auth_token, bytes))
