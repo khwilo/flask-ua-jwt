@@ -131,3 +131,32 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response_msg["user"]["firstname"], "foo")
         self.assertEqual(response_msg["user"]["lastname"], "bar")
         self.assertEqual(response_msg["user"]["email"], "foo123@example.com")
+
+    def test_user_logout(self):
+        """Test that a user can logout"""
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        self.assertEqual(res.status_code, 201)
+        res = self.client.post(
+            "/v1/auth/login",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_LOGIN)
+        )
+        self.assertEqual(res.status_code, 200)
+        auth_token = json.loads(res.data.decode("UTF-8"))["auth_token"]
+        res = self.client.post(
+            "/v1/auth/logout",
+            headers=BaseTestCase.get_authentication_headers(auth_token)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(response_msg["message"])
+        self.assertTrue(response_msg["status"])
+        self.assertEqual(
+            response_msg["message"],
+            "You have successfully logged out"
+        )
+        self.assertEqual(response_msg["status"], 200)
