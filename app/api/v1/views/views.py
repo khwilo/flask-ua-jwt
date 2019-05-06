@@ -2,7 +2,7 @@
 from flask import abort, request
 from flask_restful import Resource, reqparse
 
-from app.api.v1.models.models import UserModel
+from app.api.v1.models.models import UserModel, BlackListTokenModel
 
 
 class UserRegistration(Resource):
@@ -119,5 +119,48 @@ class UserInfo(Resource):
         else:
             abort(401, {
                 "status": 401,
+                "error": "Please provide a valid authentication token"
+            })
+
+
+class UserLogout(Resource):
+    """
+    User Logout Resource
+    """
+    def post(self):
+        """Logout a user"""
+        auth_header = request.headers.get("Authorization")
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                abort(401, {
+                    "error": "Bearer token is malformed"
+                })
+        else:
+            auth_token = " "
+        if auth_token:
+            response = UserModel.decode_auth_token(auth_token)
+            if not isinstance(response, str):
+                blacklist_token = BlackListTokenModel(token=auth_token)
+                try:
+                    blacklist_token.save()
+                    return {
+                        "status": 200,
+                        "message": "You have successfully logged out"
+                    }
+                except Exception as exception:
+                    abort(401, {
+                        "status": 401,
+                        "error": exception
+                    })
+            else:
+                abort(401, {
+                    "status": 401,
+                    "error": response
+                })
+        else:
+            abort(403, {
+                "status": 403,
                 "error": "Please provide a valid authentication token"
             })
