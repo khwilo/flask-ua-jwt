@@ -1,5 +1,6 @@
 """Test cases for the user authentication"""
 import json
+import time
 
 from app.api.v1.models.models import UserModel
 from app.tests.v1.sample_data import USER_REGISTRATION, USER_LOGIN, \
@@ -160,3 +161,62 @@ class UserTestCase(BaseTestCase):
             "You have successfully logged out"
         )
         self.assertEqual(response_msg["status"], 200)
+
+    def test_user_logout_missing_token(self):
+        """Test missing authentication token on user logout"""
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        self.assertEqual(res.status_code, 201)
+        res = self.client.post(
+            "/v1/auth/login",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_LOGIN)
+        )
+        self.assertEqual(res.status_code, 200)
+        auth_token = ""
+        res = self.client.post(
+            "/v1/auth/logout",
+            headers=BaseTestCase.get_authentication_headers(auth_token)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 403)
+        self.assertTrue(response_msg["message"]["error"])
+        self.assertTrue(response_msg["message"]["status"])
+        self.assertEqual(
+            response_msg["message"]["error"],
+            "Please provide a valid authentication token"
+        )
+        self.assertEqual(response_msg["message"]["status"], 403)
+
+    def test_user_log_out_expired_token(self):
+        """Test expired authentication token on user logout"""
+        res = self.client.post(
+            "/v1/auth/signup",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_REGISTRATION)
+        )
+        self.assertEqual(res.status_code, 201)
+        res = self.client.post(
+            "/v1/auth/login",
+            headers=BaseTestCase.get_accept_content_type_headers(),
+            data=json.dumps(USER_LOGIN)
+        )
+        self.assertEqual(res.status_code, 200)
+        auth_token = json.loads(res.data.decode("UTF-8"))["auth_token"]
+        time.sleep(31)
+        res = self.client.post(
+            "/v1/auth/logout",
+            headers=BaseTestCase.get_authentication_headers(auth_token)
+        )
+        response_msg = json.loads(res.data.decode("UTF-8"))
+        self.assertEqual(res.status_code, 401)
+        self.assertTrue(response_msg["message"]["error"])
+        self.assertTrue(response_msg["message"]["status"])
+        self.assertEqual(
+            response_msg["message"]["error"],
+            "Signature expired. Please log in again."
+        )
+        self.assertEqual(response_msg["message"]["status"], 401)
