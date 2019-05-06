@@ -38,3 +38,21 @@ def drop_user_table_query():
     """SQL query to drop the users table"""
     drop_users = "DROP TABLE IF EXISTS users CASCADE"
     return drop_users
+
+
+def create_blacklist_tokens_table_query():
+    """SQL query to create the blacklist tokens table"""
+    blacklist_tokens = """CREATE TABLE IF NOT EXISTS blacklist_tokens(
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(500) UNIQUE NOT NULL,
+    blacklisted_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    )
+    """
+    return blacklist_tokens
+
+
+def insert_blacklist_token_query():
+    """SQL query to insert a blacklist token to the 'blacklist_tokens' table"""
+    insert_blacklist_token = """INSERT INTO blacklist_tokens(
+    token) VALUES('{}')"""
+    return insert_blacklist_token

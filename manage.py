@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from flask import current_app
 
 from app.api.v1.models.queries import create_user_table_query, \
-    drop_user_table_query
+    drop_user_table_query, create_blacklist_tokens_table_query
 
 DOTENV_PATH = join(dirname(__file__), ".env")
 
@@ -29,9 +29,12 @@ def establish_connection():
 def create_table(connection):
     """Create a database table"""
     cursor = connection.cursor()
-    query = create_user_table_query()
-    cursor.execute(query)
-    connection.commit()
+    queries = [
+        create_user_table_query(), create_blacklist_tokens_table_query()
+    ]
+    for query in queries:
+        cursor.execute(query)
+        connection.commit()
 
 
 def destroy(database_url):
