@@ -117,8 +117,8 @@ class UserInfo(Resource):
                 "error": response
             })
         else:
-            abort(401, {
-                "status": 401,
+            abort(403, {
+                "status": 403,
                 "error": "Please provide a valid authentication token"
             })
 
