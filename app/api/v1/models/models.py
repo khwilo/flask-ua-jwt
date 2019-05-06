@@ -7,7 +7,8 @@ import jwt
 from dotenv import load_dotenv
 
 from app.api.v1.models.base_model import BaseModel
-from app.api.v1.models.queries import insert_user_query
+from app.api.v1.models.queries import insert_user_query, \
+    insert_blacklist_token_query
 
 DOTENV_PATH = join(dirname(__file__), ".env")
 
@@ -82,3 +83,17 @@ class UserModel(BaseModel):
             "isAdmin": result["is_admin"],
             "registered": str(result["registered_on"]),
         }
+
+
+class BlackListTokenModel(BaseModel):
+    """Entity representation for a blacklist token"""
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.token = kwargs.get("token")
+        self.blacklisted_on = str(datetime.utcnow())
+
+    def save(self):
+        """Add a blacklist token to the 'blacklist_tokens' table"""
+        query = insert_blacklist_token_query().format(self.token)
+        self.cursor.execute(query)
+        self.connection.commit()
